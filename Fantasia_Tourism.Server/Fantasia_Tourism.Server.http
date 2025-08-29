@@ -1,0 +1,6 @@
+@Fantasia_Tourism.Server_HostAddress = http://localhost:5182
+
+GET {{Fantasia_Tourism.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
