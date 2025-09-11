@@ -9,6 +9,7 @@ namespace Fantasis_Tourism_DataAccess.Services
         Task AddAsync(Users user);
         Task<bool> UpdateAsync(Users user);
         Task DeleteAsync(int id);
-
+        Task<bool> CheckUserinfo(string userId);
+        Task<bool> UpsertPaymentMethod(PaymentMethod paymentMethod);
     }
 }

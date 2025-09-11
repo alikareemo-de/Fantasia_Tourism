@@ -1,6 +1,14 @@
 
 import axios from "axios";
 
+
+export interface PropertyImage {
+    Id: string;
+    imageName?: string;
+    base64?: string;
+    contentType?: string;
+    isMain?: boolean;
+}
 export interface Property {
     Id: string;
     UserId: string;
@@ -8,7 +16,7 @@ export interface Property {
     type: string;
     description: string;
     capacity: number;
-    price: number;
+    pricePerNight: number;
     status: string;
     city: string;
     country: string;
@@ -16,13 +24,13 @@ export interface Property {
     rooms: number;
     hasCar: boolean;
     tripPlan: string;
-    features: string[];
+    features: string;
     images: string[];
 }
 export interface PropertyDto {
     id: string;
     userId: string;
-    title: string;          
+    PropertyName: string;          
     description: string;   
     type: string;
     status: string;
@@ -31,12 +39,13 @@ export interface PropertyDto {
     city: string;
     tripPlan: string;
     country: string;
-    address: string;       
-    price: number | null;
+    location: string;       
+    pricePerNight: number | null;
     capacity: number;
-    images: string[];       
+    images: PropertyImage[];       
     mainImage: string;
     createdDate: string;
+    expireDate: Date;
     features: string[];     
 }
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -51,27 +60,27 @@ export const fetchPropertyById = async (id: string): Promise<PropertyDto> => {
 
         const dto = await res.json();
 
-        const rawImages: string[] = Array.isArray(dto.allimgae) ? dto.allimgae : [];
-        const images: string[] = [
-            ...(dto.mainImage ? [dto.mainImage] : []),
-            ...rawImages.filter((u) => u && u !== dto.mainImage),
-        ];
+       
 
         return {
             id: dto.id,
             userId: dto.userId,
-            title: dto.propertyName,
+            PropertyName: dto.propertyName,
             description: dto.description ?? '',
             type: dto.type,
             status: dto.status,
             city: dto.city,
+            rooms: dto.rooms,
+            hasCar: dto.hasCar,
+            capacity: dto.capacity,
+            tripPlan: dto.tripPlan,
+            expireDate: dto.expireDate,
             country: dto.country,
-            address: [dto.city, dto.country].filter(Boolean).join(', '),
-            price: dto.price ?? null,              
-            images:dto.allimgae,
-            mainImage: dto.mainImage ?? (images[0] ?? ''),
-            createdDate: dto.createdDate,
-            features: [],                       
+            location: dto.location,
+            pricePerNight: dto.pricePerNight ?? null,
+            features: dto.features,
+            images: dto.images
+            
         };
     } catch (error) {
         console.error('Error fetching property:', error);

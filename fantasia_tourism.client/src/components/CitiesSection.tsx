@@ -1,30 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
 import { Map } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { getLastProperties, getImageUrl } from '@/services/propertyApi';
+import { getLastProperties } from '@/services/propertyApi';
+import PropertyImageGallery from '@/components/PropertyImageGallery';
+
+interface PropertyImage {
+    base64?: string;
+    contentType?: string;
+    isMain?: boolean;
+}
 
 interface Property {
     id: string;
     propertyName: string;
     city: string;
     country: string;
-    mainImage?: string;
+    images: PropertyImage[];
 }
 
 interface CityCardProps {
     title: string;
     count: number;
-    image?: string;
+    images?: PropertyImage[];
 }
 
-const CityCard: React.FC<CityCardProps> = ({ title, count, image }) => {
+const CityCard: React.FC<CityCardProps> = ({ title, count, images }) => {
     return (
         <div className="tourism-card hover-scale group">
             <div className="h-48 bg-tourism-light-blue relative overflow-hidden">
-                {image ? (
-                    <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                {images && images.length > 0 ? (
+                    <PropertyImageGallery images={images} propertyTitle={title} />
                 ) : (
                     <div className="flex items-center justify-center h-full">
                         <Map size={40} className="text-tourism-teal" />
@@ -37,7 +43,6 @@ const CityCard: React.FC<CityCardProps> = ({ title, count, image }) => {
                     <p className="text-sm text-white/80">{count} listings</p>
                 </div>
             </div>
-            
         </div>
     );
 };
@@ -47,9 +52,9 @@ const CitiesSection: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchProperties = async () => {
+        const fetchPropertiesData = async () => {
             try {
-                const data = await getLastProperties(); 
+                const data = await getLastProperties();
                 setProperties(data);
             } catch (error) {
                 console.error(error);
@@ -57,7 +62,7 @@ const CitiesSection: React.FC = () => {
                 setLoading(false);
             }
         };
-        fetchProperties();
+        fetchPropertiesData();
     }, []);
 
     if (loading) return <p className="text-center mt-10">Loading...</p>;
@@ -74,14 +79,14 @@ const CitiesSection: React.FC = () => {
                         <CityCard
                             key={prop.id}
                             title={`${prop.propertyName} - ${prop.city}`}
-                            count={1} 
-                            image={prop.mainImage ? getImageUrl(prop.mainImage) : undefined}
+                            count={prop.images?.length || 1}
+                            images={prop.images}
                         />
                     ))}
                 </div>
 
                 <div className="flex justify-center mt-10">
-                    <Link to="/properties" className="tourism-btn">Explore All Properties</Link>   
+                    <Link to="/properties" className="tourism-btn">Explore All Properties</Link>
                 </div>
             </div>
         </div>

@@ -48,6 +48,8 @@ namespace Fantasia_Tourism.Server
             builder.Services.AddSingleton<JwtTokenService>();
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();
             builder.Services.AddCors(options =>

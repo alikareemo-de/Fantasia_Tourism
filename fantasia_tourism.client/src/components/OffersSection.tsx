@@ -8,7 +8,7 @@
 //interface PropertyCardProps {
 //  title: string;
 //  location: string;
-//  price: number;
+//  pricePerNight: number;
 //  id: number;
 //  rating?: number;
 //  image?: string;
@@ -18,7 +18,7 @@
 //const PropertyCard: React.FC<PropertyCardProps> = ({ 
 //  title, 
 //  location, 
-//  price, 
+//  pricePerNight, 
 //  id, 
 //  rating = 4.5,
 //  image,
@@ -78,7 +78,7 @@
 //        <div className="mt-auto flex justify-between items-center">
 //          <p className="text-sm">
 //            <span className="font-medium text-gray-600">From</span><br />
-//            <span className="font-bold text-tourism-ocean text-lg">${price}</span>
+//            <span className="font-bold text-tourism-ocean text-lg">${pricePerNight}</span>
 //            <span className="text-xs text-gray-500"> /night</span>
 //          </p>
 //          <Button 
@@ -100,7 +100,7 @@
 //      id: 1, 
 //      title: "Luxury Villa", 
 //      location: "Miami, USA", 
-//      price: 299, 
+//      pricePerNight: 299, 
 //      image: "https://images.unsplash.com/photo-1613553507747-5f8d62ad5904?auto=format&w=500&h=250",
 //      amenities: ["Pool", "WiFi", "Sea View"],
 //      rating: 4.8
@@ -109,7 +109,7 @@
 //      id: 2, 
 //      title: "Beach House", 
 //      location: "Barcelona, Spain", 
-//      price: 199, 
+//      pricePerNight: 199, 
 //      image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&w=500&h=250",
 //      amenities: ["Beach Access", "WiFi", "Kitchen"],
 //      rating: 4.6
@@ -118,7 +118,7 @@
 //      id: 3, 
 //      title: "Downtown Loft", 
 //      location: "New York, USA", 
-//      price: 249, 
+//      pricePerNight: 249, 
 //      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&w=500&h=250",
 //      amenities: ["City View", "WiFi", "Gym"],
 //      rating: 4.4
@@ -127,7 +127,7 @@
 //      id: 4, 
 //      title: "Mountain Cabin", 
 //      location: "Aspen, USA", 
-//      price: 179, 
+//      pricePerNight: 179, 
 //      image: "https://images.unsplash.com/photo-1593696954577-ab3d39317b97?auto=format&w=500&h=250",
 //      amenities: ["Fireplace", "Hiking", "View"],
 //      rating: 4.9
@@ -151,7 +151,7 @@
 //              id={property.id}
 //              title={property.title}
 //              location={property.location}
-//              price={property.price}
+//              pricePerNight={property.pricePerNight}
 //              image={property.image}
 //              rating={property.rating}
 //              amenities={property.amenities}

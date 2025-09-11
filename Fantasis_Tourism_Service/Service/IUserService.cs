@@ -10,6 +10,10 @@ namespace Fantasis_Tourism_Service.Service
         Task<bool> UpdateUserAsync(Users user);
         Task DeleteUserAsync(int id);
         Task<Users?> AuthenticateAsync(string username, string password);
+        Task<bool> AddOrUpdatePaymentMethodAsync(PaymentMethodDto paymentMethod);
+
+        Task<bool> CheckUserinfo(string userId);
+
 
     }
 }

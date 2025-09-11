@@ -26,6 +26,7 @@ namespace Fantasis_Tourism_Service.Service
             return BCrypt.Net.BCrypt.HashPassword(combined);
         }
 
+
         private bool VerifyPassword(string password, string username, string storedHash)
         {
             var combined = CombinePasswordAndUsername(password, username);
@@ -34,7 +35,37 @@ namespace Fantasis_Tourism_Service.Service
 
         public async Task<Users?> GetUserByIdAsync(string id)
         {
-            return await _userRepository.GetByIdAsync(id);
+
+            var user = await _userRepository.GetByIdAsync(id);
+
+            if (user == null) return null;
+
+            return new Users
+            {
+                Id = user.Id,
+                Username = user.Username,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                CellPhoneNumber = user.CellPhoneNumber,
+                Dateofbirth = user.Dateofbirth,
+                country = user.country,
+                city = user.city,
+                Address = user.Address,
+                PaymentMethods = user.PaymentMethods.Select(pm => new PaymentMethod
+                {
+                    Id = pm.Id,
+                    CardNumber = $"{pm.CardNumber[0]}*** **** **** {pm.CardNumber.Substring(pm.CardNumber.Length - 4)}",
+
+                    ExpiryDate = pm.ExpiryDate,
+                    CardholderName = pm.CardholderName,
+                    BillingAddress = pm.BillingAddress,
+                    City = pm.City,
+                    State = pm.State,
+                    ZipCode = pm.ZipCode,
+                    Country = pm.Country
+                }).ToList()
+            };
         }
 
         public async Task<List<Users>> GetAllUsersAsync()
@@ -87,5 +118,45 @@ namespace Fantasis_Tourism_Service.Service
 
             return user;
         }
+
+        public async Task<bool> AddOrUpdatePaymentMethodAsync(PaymentMethodDto paymentMethod)
+        {
+            try
+            {
+                PaymentMethod method = new PaymentMethod
+                {
+                    Id = paymentMethod.Id,
+                    UserId = paymentMethod.UserId,
+                    CardholderName = paymentMethod.CardholderName,
+                    CardNumber = paymentMethod.CardNumber,
+                    City = paymentMethod.City,
+                    State = paymentMethod.State,
+                    Country = paymentMethod.Country,
+                    BillingAddress = paymentMethod.BillingAddress,
+                    ExpiryDate = paymentMethod.ExpiryDate,
+                    ZipCode = paymentMethod.ZipCode
+                };
+                var result = await _userRepository.UpsertPaymentMethod(method);
+                if (result)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> CheckUserinfo(string userId)
+        {
+            return await _userRepository.CheckUserinfo(userId);
+        }
+
     }
 }

@@ -11,6 +11,8 @@ namespace Fantasis_Tourism_Service.Service
         Task<List<PropertyDto>> GetAllLastProperties();
         Task<PropertyDto> GetPropertyById(string Id);
         Task<bool> DeleteProperty(string Id);
+        Task<bool> UpdateProerty(PropertyDto property);
+
 
     }
 }

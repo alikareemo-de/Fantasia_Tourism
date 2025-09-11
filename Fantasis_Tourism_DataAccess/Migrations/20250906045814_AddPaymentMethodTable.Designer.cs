@@ -4,6 +4,7 @@ using Fantasis_Tourism_DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fantasis_Tourism_DataAccess.Migrations
 {
     [DbContext(typeof(Fantasis_TourismDbContext))]
-    partial class Fantasis_TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906045814_AddPaymentMethodTable")]
+    partial class AddPaymentMethodTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,47 +24,6 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.Booking", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AdditionalNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CheckInDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CheckOutDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExpectedArrivalTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HostId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("NumberOfGuests")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Booking");
-                });
 
             modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.PaymentMethod", b =>
                 {
@@ -82,6 +44,9 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cvv")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExpiryDate")
@@ -236,29 +201,6 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.Booking", b =>
-                {
-                    b.HasOne("Fantasis_Tourism_DataAccess.Model.Users", "Host")
-                        .WithMany()
-                        .HasForeignKey("HostId");
-
-                    b.HasOne("Fantasis_Tourism_DataAccess.Model.Property", "Property")
-                        .WithMany()
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Fantasis_Tourism_DataAccess.Model.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Host");
-
-                    b.Navigation("Property");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.PaymentMethod", b =>

@@ -28,6 +28,20 @@ namespace Fantasia_Tourism.Server.Controllers
             return BadRequest("Fail..!");
         }
 
+        [HttpPost("Editproperties")]
+        public async Task<IActionResult> Editproperty([FromBody] PropertyDto property)
+        {
+            if (property == null || property.Id == Guid.Empty)
+            {
+                return BadRequest("Invalid property data.");
+            }
+            if (await _propertyService.UpdateProerty(property))
+            {
+                return Ok(property);
+            }
+            return BadRequest("Fail to update data...!");
+        }
+
         //[HttpPost("Editproperties")]
         //public async Task<IActionResult> Editproperties([FromBody] )
 
@@ -74,7 +88,7 @@ namespace Fantasia_Tourism.Server.Controllers
         [HttpGet("GetPoropertyById")]
         public async Task<IActionResult> GetPoropertyById(string Id)
         {
-            var result = await _propertyService.GetPropertyById(Id);
+            PropertyDto result = await _propertyService.GetPropertyById(Id);
             return Ok(result);
         }
 
@@ -88,6 +102,8 @@ namespace Fantasia_Tourism.Server.Controllers
             }
             return BadRequest();
         }
+
+
 
     }
 }

@@ -9,7 +9,13 @@ import AddProperty from '@/components/AddProperty';
 import { fetchPropertiesforuser, deleteProperty } from '@/services/propertyApi';
 import { useUser } from '../contexts/UserContext';
 import { Link } from "react-router-dom";
-
+import PropertyImageGallery from '@/components/PropertyImageGallery';
+import { toast } from '@/hooks/use-toast';
+interface PropertyImage {
+    base64?: string;
+    contentType?: string;
+    isMain?: boolean;
+}
 
 interface Property {
     id: string;
@@ -18,45 +24,28 @@ interface Property {
     status: string;
     city: string;
     country: string;
-    mainImage: string;
-    price?: number;
+    pricePerNight?: number;
+    images: PropertyImage[];
 }
 
 interface PropertyItemProps {
     property: Property;
     onDelete: (id: string) => void;
-
 }
 
-const buildImageUrl = (path?: string) => {
-    if (!path) return undefined;
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const base = import.meta.env.VITE_API_BASE_URL ?? '';
-    return `${base}${path}`;
-};
-
 const PropertyItem: React.FC<PropertyItemProps> = ({ property, onDelete }) => {
-    const mainImageUrl = buildImageUrl(property.mainImage);
-
     return (
         <Card className="tourism-card overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3 h-48 md:h-auto relative bg-tourism-light-blue">
-                    {mainImageUrl ? (
-                        <img
-                            src={mainImageUrl}
-                            alt={property.propertyName}
-                            className="w-full h-full object-cover"
-                        />
+                    {property.images && property.images.length > 0 ? (
+                        <PropertyImageGallery images={property.images} propertyTitle={property.propertyName} />
                     ) : (
                         <div className="flex items-center justify-center h-full">
                             <Map size={40} className="text-tourism-teal" />
                         </div>
                     )}
-                    <div className="absolute top-2 right-2 bg-white/80 rounded-md px-2 py-1 flex items-center">
-                        <Star className="h-4 w-4 text-tourism-sunset fill-tourism-sunset mr-1" />
-                        <span className="text-sm font-medium">4.5</span>
-                    </div>
+                    
                 </div>
 
                 <div className="p-4 md:p-6 flex-1">
@@ -79,9 +68,9 @@ const PropertyItem: React.FC<PropertyItemProps> = ({ property, onDelete }) => {
 
                     <div className="flex justify-between items-end mt-auto">
                         <div>
-                            <p className="text-sm text-gray-500">Price per Night</p>
+                            <p className="text-sm text-gray-500">pricePerNight per Night</p>
                             <p className="font-bold text-lg text-tourism-ocean">
-                                {property.price ? `$${property.price}` : 'N/A'}
+                                {property.pricePerNight ? `$${property.pricePerNight}` : 'N/A'}
                             </p>
                         </div>
 
@@ -112,14 +101,33 @@ const MyProperties = () => {
     const [properties, setProperties] = useState<Property[]>([]);
     const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'saved'>('upcoming');
     const { user } = useUser();
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     useEffect(() => {
         (async () => {
             const data = await fetchPropertiesforuser(user.id);
             setProperties(data ?? []);
         })();
-    }, []);
+    }, [user.id]);
 
+    const handleAddPropertyClick = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/account/check-user-info?userId=${user.id}`);
+            const result = await response.json();
+
+            if (result === true) {
+                setShowAddProperty(prev => !prev);
+            } else {
+                toast({
+                    title: "Incomplete Profile",
+                    description: "You cannot add a property until you complete your information (e.g., payment method).",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            console.error('Error checking user info:', error);
+            alert('Failed to check user info.');
+        }
+    };
     const handleDelete = async (id: string) => {
         const ok = await deleteProperty(id);
         if (ok) {
@@ -144,7 +152,7 @@ const MyProperties = () => {
     useEffect(() => {
         if (upcomingProperties.length > 0) setActiveTab('upcoming');
         else if (pastProperties.length > 0) setActiveTab('past');
-        else setActiveTab('saved'); 
+        else setActiveTab('saved');
     }, [upcomingProperties.length, pastProperties.length, savedProperties.length]);
 
     return (
@@ -155,7 +163,7 @@ const MyProperties = () => {
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold gradient-heading">My Properties</h1>
                     <Button
-                        onClick={() => setShowAddProperty(!showAddProperty)}
+                        onClick={handleAddPropertyClick}
                         className="tourism-btn flex items-center gap-2"
                     >
                         <Plus size={20} />
@@ -183,7 +191,7 @@ const MyProperties = () => {
                         {upcomingProperties.length === 0 ? (
                             <p className="text-gray-500">No upcoming properties.</p>
                         ) : (
-                                upcomingProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
+                            upcomingProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
                         )}
                     </TabsContent>
 
@@ -191,7 +199,7 @@ const MyProperties = () => {
                         {pastProperties.length === 0 ? (
                             <p className="text-gray-500">No past stays.</p>
                         ) : (
-                                pastProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
+                            pastProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
                         )}
                     </TabsContent>
 
@@ -200,10 +208,10 @@ const MyProperties = () => {
                             properties.length === 0 ? (
                                 <p className="text-gray-500">No saved properties.</p>
                             ) : (
-                                    normalized.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
+                                normalized.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
                             )
                         ) : (
-                                savedProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
+                            savedProperties.map((prop) => <PropertyItem key={prop.id} property={prop} onDelete={handleDelete} />)
                         )}
                     </TabsContent>
                 </Tabs>

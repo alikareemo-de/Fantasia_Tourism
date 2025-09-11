@@ -10,6 +10,10 @@ namespace Fantasis_Tourism_DataAccess
         public DbSet<Users> Users { get; set; } = null!;
         public DbSet<Property> Property { get; set; }
         public DbSet<PropertyImage> PropertyImages { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<Booking> Booking { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -18,7 +22,10 @@ namespace Fantasis_Tourism_DataAccess
             {
                 entity.HasKey(e => e.Id);
             });
-
+            modelBuilder.Entity<PaymentMethod>()
+            .HasOne(pm => pm.User)
+            .WithMany(u => u.PaymentMethods)
+            .HasForeignKey(pm => pm.UserId);
             modelBuilder.Entity<Property>(entity =>
             {
                 entity.HasKey(e => e.Id);

@@ -19,9 +19,21 @@ namespace Fantasis_Tourism_DataAccess.Services
 
         public async Task<Users?> GetByIdAsync(string id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+        .Include(u => u.PaymentMethods)
+        .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<bool> CheckUserinfo(string userId)
+        {
+            var existing = await _context.PaymentMethods
+                .FirstOrDefaultAsync(pm => pm.UserId == userId);
+            if (existing != null)
+            {
+                return true;
+            }
+            return false;
+        }
         public async Task<List<Users>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
@@ -32,6 +44,7 @@ namespace Fantasis_Tourism_DataAccess.Services
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<bool> UpdateAsync(Users user)
         {
@@ -90,5 +103,41 @@ namespace Fantasis_Tourism_DataAccess.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> UpsertPaymentMethod(PaymentMethod paymentMethod)
+        {
+            try
+            {
+                if (paymentMethod == null || string.IsNullOrEmpty(paymentMethod.UserId))
+                    return false;
+                var existing = await _context.PaymentMethods
+                .FirstOrDefaultAsync(pm => pm.UserId == paymentMethod.UserId);
+                if (existing != null)
+                {
+                    existing.CardholderName = paymentMethod.CardholderName;
+                    existing.CardNumber = paymentMethod.CardNumber;
+                    existing.ExpiryDate = paymentMethod.ExpiryDate;
+                    existing.BillingAddress = paymentMethod.BillingAddress;
+                    existing.City = paymentMethod.City;
+                    existing.Country = paymentMethod.Country;
+                    existing.State = paymentMethod.State;
+                    existing.ZipCode = paymentMethod.ZipCode;
+                }
+                else
+                {
+                    await _context.PaymentMethods.AddAsync(paymentMethod);
+                }
+                await _context.SaveChangesAsync();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+
     }
 }

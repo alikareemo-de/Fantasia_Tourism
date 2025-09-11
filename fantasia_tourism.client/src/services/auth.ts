@@ -1,3 +1,4 @@
+import { useUser } from '../contexts/UserContext';
 
 interface User {
     id: string;
@@ -26,8 +27,8 @@ interface RegisterData {
 }
 
 interface SignInData {
-  username: string;
-  password: string;
+    username: string;
+    password: string;
 }
 
 
@@ -61,7 +62,7 @@ export const registerUser = async (data: RegisterData): Promise<User> => {
 
 export interface SignInResponse {
     user: User;
-    token: string;  
+    token: string;
 }
 
 export const signInUser = async (data: SignInData): Promise<User> => {
@@ -83,7 +84,6 @@ export const signInUser = async (data: SignInData): Promise<User> => {
     localStorage.setItem('authToken', result.token);
 
     localStorage.setItem('currentUser', JSON.stringify(result.user));
-
     currentUser = result.user;
 
     return result.user;
@@ -92,24 +92,25 @@ export const signInUser = async (data: SignInData): Promise<User> => {
 
 
 export const getCurrentUser = (): User | null => {
-  if (currentUser) {
-    return currentUser;
-  }
-  
-  const savedUser = localStorage.getItem("currentUser");
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    return currentUser;
-  }
-  
-  return null;
+    if (currentUser) {
+        return currentUser;
+    }
+
+    const savedUser = localStorage.getItem("currentUser");
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        return currentUser;
+    }
+
+    return null;
 };
 
 export const signOutUser = (): void => {
-  currentUser = null;
-  localStorage.removeItem("currentUser");
+    currentUser = null;
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("authToken");
 };
 
 export const isAuthenticated = (): boolean => {
-  return getCurrentUser() !== null;
+    return getCurrentUser() !== null;
 };

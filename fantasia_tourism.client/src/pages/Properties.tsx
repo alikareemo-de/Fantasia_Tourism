@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useEffect, useMemo } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Card } from '@/components/ui/card';
@@ -9,43 +10,36 @@ import AddProperty from '@/components/AddProperty';
 import { Link } from "react-router-dom";
 
 import { fetchProperties } from '@/services/propertyApi';
+import PropertyImageGallery from '@/components/PropertyImageGallery';
 
+interface PropertyImage {
+    base64?: string;
+    contentType?: string;
+    isMain?: boolean;
+}
 
 interface Property {
     id: string;
     propertyName: string;
     type: string;
-    status: string;             
+    status: string;
     city: string;
     country: string;
-    mainImage: string;          
-    price?: number;
+    pricePerNight?: number;
+    images: PropertyImage[];
 }
 
 interface PropertyItemProps {
     property: Property;
 }
 
-const buildImageUrl = (path?: string) => {
-    if (!path) return undefined;
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const base = import.meta.env.VITE_API_BASE_URL ?? '';
-    return `${base}${path}`;
-};
-
 const PropertyItem: React.FC<PropertyItemProps> = ({ property }) => {
-    const mainImageUrl = buildImageUrl(property.mainImage);
-
     return (
         <Card className="tourism-card overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3 h-48 md:h-auto relative bg-tourism-light-blue">
-                    {mainImageUrl ? (
-                        <img
-                            src={mainImageUrl}
-                            alt={property.propertyName}
-                            className="w-full h-full object-cover"
-                        />
+                    {property.images && property.images.length > 0 ? (
+                        <PropertyImageGallery images={property.images} propertyTitle={property.propertyName} />
                     ) : (
                         <div className="flex items-center justify-center h-full">
                             <Map size={40} className="text-tourism-teal" />
@@ -77,9 +71,9 @@ const PropertyItem: React.FC<PropertyItemProps> = ({ property }) => {
 
                     <div className="flex justify-between items-end mt-auto">
                         <div>
-                            <p className="text-sm text-gray-500">Price per Night</p>
+                            <p className="text-sm text-gray-500">pricePerNight per Night</p>
                             <p className="font-bold text-lg text-tourism-ocean">
-                                {property.price ? `$${property.price}` : 'N/A'}
+                                {property.pricePerNight ? `$${property.pricePerNight}` : 'N/A'}
                             </p>
                         </div>
                         <div className="space-x-2">
@@ -98,7 +92,6 @@ const PropertyItem: React.FC<PropertyItemProps> = ({ property }) => {
 };
 
 const Properties = () => {
-    const [showAddProperty, setShowAddProperty] = useState(false);
     const [properties, setProperties] = useState<Property[]>([]);
     const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'saved'>('upcoming');
 
@@ -119,89 +112,25 @@ const Properties = () => {
         [properties]
     );
 
-    const upcomingProperties = normalized.filter((p) => p.status === 'upcoming');
-    const pastProperties = normalized.filter((p) => p.status === 'past');
-    const savedProperties = normalized.filter((p) => p.status === 'saved');
 
-    useEffect(() => {
-        if (upcomingProperties.length > 0) setActiveTab('upcoming');
-        else if (pastProperties.length > 0) setActiveTab('past');
-        else setActiveTab('saved'); 
-    }, [upcomingProperties.length, pastProperties.length, savedProperties.length]);
+
 
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
             <main className="flex-1 container mx-auto px-4 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold gradient-heading">Properties</h1>
-                    <Button
-                        onClick={() => setShowAddProperty(!showAddProperty)}
-                        className="tourism-btn flex items-center gap-2"
-                    >
-                        <Plus size={20} />
-                        {showAddProperty ? 'Cancel' : 'Add Property'}
-                    </Button>
-                </div>
+                <h2 className="text-2xl font-bold mb-6 text-tourism-ocean">All Properties</h2>
 
-                {showAddProperty && (
-                    <div className="mb-8">
-                        <AddProperty />
+                {properties.length === 0 ? (
+                    <p className="text-gray-500">No properties found.</p>
+                ) : (
+                    <div className="space-y-6">
+                        {properties.map((prop) => (
+                            <PropertyItem key={prop.id} property={prop} />
+                        ))}
                     </div>
                 )}
-
-                <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="mb-6">
-                    <TabsList className="bg-tourism-light-blue/30 p-1">
-                        {/*<TabsTrigger*/}
-                        {/*    value="upcoming"*/}
-                        {/*    className="data-[state=active]:bg-tourism-teal data-[state=active]:text-white"*/}
-                        {/*>*/}
-                        {/*    Upcoming*/}
-                        {/*</TabsTrigger>*/}
-                        {/*<TabsTrigger*/}
-                        {/*    value="past"*/}
-                        {/*    className="data-[state=active]:bg-tourism-teal data-[state=active]:text-white"*/}
-                        {/*>*/}
-                        {/*    Past Stays*/}
-                        {/*</TabsTrigger>*/}
-                        <TabsTrigger
-                            value="saved"
-                            className="data-[state=active]:bg-tourism-teal data-[state=active]:text-white"
-                        >
-                            All Properties
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="upcoming" className="mt-6 space-y-6">
-                        {upcomingProperties.length === 0 ? (
-                            <p className="text-gray-500">No upcoming properties.</p>
-                        ) : (
-                            upcomingProperties.map((prop) => <PropertyItem key={prop.id} property={prop} />)
-                        )}
-                    </TabsContent>
-
-                    <TabsContent value="past" className="mt-6 space-y-6">
-                        {pastProperties.length === 0 ? (
-                            <p className="text-gray-500">No past stays.</p>
-                        ) : (
-                            pastProperties.map((prop) => <PropertyItem key={prop.id} property={prop} />)
-                        )}
-                    </TabsContent>
-
-                    <TabsContent value="saved" className="mt-6 space-y-6">
-                        {savedProperties.length === 0 ? (
-                       
-                            properties.length === 0 ? (
-                                <p className="text-gray-500">No saved properties.</p>
-                            ) : (
-                                normalized.map((prop) => <PropertyItem key={prop.id} property={prop} />)
-                            )
-                        ) : (
-                            savedProperties.map((prop) => <PropertyItem key={prop.id} property={prop} />)
-                        )}
-                    </TabsContent>
-                </Tabs>
             </main>
 
             <Footer />

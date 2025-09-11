@@ -1,4 +1,5 @@
-﻿using Fantasis_Tourism_DataAccess.Model;
+﻿using Fantasis_Tourism_DataAccess.Enums;
+using Fantasis_Tourism_DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -54,23 +55,31 @@ namespace Fantasis_Tourism_DataAccess.Services
             try
             {
                 var properties = await _context.Property
-                    .Select(p => new PropertyDto
-                    {
-                        Id = p.Id,
-                        PropertyName = p.PropertyName,
-                        Type = p.Type,
-                        CreatedDate = p.CreatedDate,
-                        Status = p.Status,
-                        City = p.City,
-                        Country = p.Country,
-                        MainImage = p.Images
-
-                        .Where(img => img.IsMain)
-                        .Select(img => img.ImageUrl)
-                        .FirstOrDefault()
-                    }).OrderByDescending(p => p.CreatedDate).Take(5)
-                    .ToListAsync();
-
+        .Include(p => p.Images)
+        .OrderByDescending(p => p.CreatedDate)
+        .Take(5)
+        .Select(p => new PropertyDto
+        {
+            Id = p.Id,
+            UserId = p.UserId,
+            PropertyName = p.PropertyName,
+            Type = (PropertyType)p.Type,
+            Description = p.Description,
+            Capacity = p.Capacity,
+            PricePerNight = p.PricePerNight,
+            Status = p.Status,
+            City = p.City,
+            Country = p.Country,
+            Location = p.Location,
+            Rooms = p.Rooms,
+            HasCar = p.HasCar,
+            TripPlan = p.TripPlan,
+            CreatedDate = p.CreatedDate,
+            Images = p.Images
+                .Where(img => img.IsMain)
+                .ToList()
+        })
+        .ToListAsync();
                 return properties;
             }
             catch (Exception ex)
@@ -84,50 +93,45 @@ namespace Fantasis_Tourism_DataAccess.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(userId))
+                var query = _context.Property
+        .Include(p => p.Images)
+        .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(userId))
                 {
-                    var properties = await _context.Property
-                                        .Select(p => new PropertyDto
-                                        {
-                                            Id = p.Id,
-                                            PropertyName = p.PropertyName,
-                                            Type = p.Type,
-                                            Status = p.Status,
-                                            City = p.City,
-                                            Country = p.Country,
-                                            MainImage = p.Images
-
-                                            .Where(img => img.IsMain)
-                                            .Select(img => img.ImageUrl)
-                                            .FirstOrDefault()
-                                        })
-                                        .ToListAsync();
-
-                    return properties;
+                    if (Guid.TryParse(userId, out Guid userGuid))
+                    {
+                        query = query.Where(p => p.UserId == userGuid);
+                    }
                 }
-                else
-                {
-                    var properties = await _context.Property
-           .Select(p => new PropertyDto
-           {
-               Id = p.Id,
-               UserId = p.UserId,
-               PropertyName = p.PropertyName,
-               Type = p.Type,
-               Status = p.Status,
-               City = p.City,
-               Country = p.Country,
-               MainImage = p.Images
 
+                query = query.OrderByDescending(p => p.CreatedDate);
+
+                var properties = await query
+                    .Select(p => new PropertyDto
+                    {
+                        Id = p.Id,
+                        UserId = p.UserId,
+                        PropertyName = p.PropertyName,
+                        Type = (PropertyType)p.Type,
+                        Description = p.Description,
+                        Capacity = p.Capacity,
+                        PricePerNight = p.PricePerNight,
+                        Status = p.Status,
+                        City = p.City,
+                        Country = p.Country,
+                        Location = p.Location,
+                        Rooms = p.Rooms,
+                        HasCar = p.HasCar,
+                        TripPlan = p.TripPlan,
+                        CreatedDate = p.CreatedDate,
+                        Images = p.Images
                             .Where(img => img.IsMain)
-                            .Select(img => img.ImageUrl)
-                            .FirstOrDefault()
-           }).Where(p => p.UserId.ToString() == userId)
-           .ToListAsync();
+                            .ToList()
+                    })
+                    .ToListAsync();
 
-                    return properties;
-                }
-
+                return properties;
             }
             catch (Exception ex)
             {
@@ -137,37 +141,47 @@ namespace Fantasis_Tourism_DataAccess.Services
             }
         }
 
+
         public async Task<PropertyDto> GetPropertyById(string Id)
         {
             try
             {
-                var result = await _context.Property
-         .Where(p => p.Id.ToString() == Id)
-         .Select(p => new PropertyDto
-         {
-             Id = p.Id,
-             UserId = p.UserId,
-             PropertyName = p.PropertyName,
-             Type = p.Type,
-             Status = p.Status,
-             City = p.City,
-             Price = p.Price,
-             Description = p.Description,
-             Country = p.Country,
-             CreatedDate = p.CreatedDate,
+                if (!Guid.TryParse(Id, out Guid propertyId))
+                    return null;
 
-             MainImage = p.Images
-                 .Where(img => img.IsMain)
-                 .Select(img => img.ImageUrl)
-                 .FirstOrDefault(),
 
-             Allimgae = p.Images
-                 .Select(img => img.ImageUrl)
-                 .ToArray()
-         })
-         .FirstOrDefaultAsync();
+                var property = await _context.Property
+                    .Include(p => p.Images)
+                    .Where(p => p.Id == propertyId)
+                    .Select(p => new PropertyDto
+                    {
+                        Id = p.Id,
+                        UserId = p.UserId,
+                        PropertyName = p.PropertyName,
+                        Type = (PropertyType)p.Type,
+                        Description = p.Description,
+                        Capacity = p.Capacity,
+                        PricePerNight = p.PricePerNight,
+                        Status = p.Status,
+                        City = p.City,
+                        Country = p.Country,
+                        Location = p.Location,
+                        Rooms = p.Rooms,
+                        HasCar = p.HasCar,
+                        TripPlan = p.TripPlan,
+                        CreatedDate = p.CreatedDate,
+                        ExpireDate = p.ExpireDate,
+                        Images = p.Images.ToList(),
+                        features = string.IsNullOrEmpty(p.features)
+                            ? Array.Empty<string>()
+                            : p.features.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    })
+                    .FirstOrDefaultAsync();
 
-                return result;
+
+
+
+                return property;
             }
             catch (Exception ex)
             {
@@ -199,6 +213,65 @@ namespace Fantasis_Tourism_DataAccess.Services
                 return false;
             }
 
+        }
+
+        public async Task<bool> UpdateProerty(Property property)
+        {
+            try
+            {
+                var existingProperty = await _context.Property
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id.ToString() == property.Id.ToString());
+                if (existingProperty == null)
+                {
+                    _logger.LogError("Property not found.");
+                    return false;
+                }
+                existingProperty.PropertyName = property.PropertyName;
+                existingProperty.Description = property.Description;
+                existingProperty.Type = property.Type;
+                existingProperty.Capacity = property.Capacity;
+                existingProperty.PricePerNight = property.PricePerNight;
+                existingProperty.Status = property.Status;
+                existingProperty.City = property.City;
+                existingProperty.Country = property.Country;
+                existingProperty.Location = property.Location;
+                existingProperty.Rooms = property.Rooms;
+                existingProperty.HasCar = property.HasCar;
+                existingProperty.TripPlan = property.TripPlan;
+                existingProperty.PricePerNight = property.PricePerNight;
+                existingProperty.ExpireDate = property.ExpireDate;
+                existingProperty.features = property.features;
+
+                _context.PropertyImages.RemoveRange(existingProperty.Images);
+                if (property.Images != null && property.Images.Any())
+                {
+                    foreach (var img in property.Images)
+                    {
+                        var newImage = new PropertyImage
+                        {
+                            Id = Guid.NewGuid(),
+                            PropertyId = existingProperty.Id,
+                            ImageName = img.ImageName,
+                            IsMain = img.IsMain,
+                            base64 = img.base64,
+                            contentType = img.contentType
+                        };
+
+                        _context.PropertyImages.Add(newImage);
+                    }
+                }
+                await _context.SaveChangesAsync();
+
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
         }
     }
 }

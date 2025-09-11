@@ -56,22 +56,9 @@ namespace Fantasia_Tourism.Server.Controllers
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
-            var result = new
-            {
-                id = user.Id,
-                username = user.Username,
-                firstName = user.FirstName,
-                lastName = user.LastName,
-                email = user.Email,
-                cellPhoneNumber = user.CellPhoneNumber,
-                dateOfBirth = user.Dateofbirth,
-                country = user.country,
-                city = user.city,
-                address = user.Address
 
-            };
 
-            return Ok(result);
+            return Ok(user);
         }
 
         [HttpGet("GetAllUsers")]
@@ -119,11 +106,27 @@ namespace Fantasia_Tourism.Server.Controllers
 
         }
 
+        [HttpPost("add-method")]
+        public async Task<IActionResult> UpdatePaymentMethod(PaymentMethodDto paymentMethod)
+        {
+            var result = await _userService.AddOrUpdatePaymentMethodAsync(paymentMethod);
+            if (!result) return BadRequest("Fail to save data");
+            return Ok(result);
+        }
+
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUserAsync(id);
             return NoContent();
         }
+
+        [HttpGet("check-user-info")]
+        public async Task<IActionResult> checkuserinfo(string userId)
+        {
+            return Ok(await _userService.CheckUserinfo(userId));
+        }
+
+
     }
 }

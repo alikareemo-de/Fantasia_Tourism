@@ -143,5 +143,40 @@ namespace Fantasis_Tourism_Service.Service
                 return false;
             }
         }
+
+        public async Task<bool> UpdateProerty(PropertyDto property)
+        {
+            try
+            {
+                Property newprop = new Property
+                {
+                    Id = property.Id,
+                    UserId = property.UserId,
+                    PropertyName = property.PropertyName,
+                    Type = (int)property.Type,
+                    Description = property.Description,
+                    Capacity = property.Capacity,
+                    PricePerNight = property.PricePerNight,
+                    Rooms = property.Rooms,
+                    Country = property.Country,
+                    City = property.City,
+                    ExpireDate = property.ExpireDate,
+                    Status = property.Status,
+                    Location = property.Location,
+                    TripPlan = property.TripPlan,
+                    HasCar = property.HasCar,
+                    features = string.Join(',', property.features),
+                    Images = property.Images
+
+                };
+                return await _propertyRepository.UpdateProerty(newprop);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+
+            }
+        }
     }
 }

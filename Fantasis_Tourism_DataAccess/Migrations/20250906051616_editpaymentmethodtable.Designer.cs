@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fantasis_Tourism_DataAccess.Migrations
 {
     [DbContext(typeof(Fantasis_TourismDbContext))]
-    [Migration("20250816160319_addprice")]
-    partial class addprice
+    [Migration("20250906051616_editpaymentmethodtable")]
+    partial class editpaymentmethodtable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,47 @@ namespace Fantasis_Tourism_DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.PaymentMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardholderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpiryDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentMethods");
+                });
+
             modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.Property", b =>
                 {
                     b.Property<Guid>("Id")
@@ -35,11 +76,9 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -49,41 +88,40 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("ExpireDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("HasCar")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Price")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("PropertyName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Rooms")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TripPlan")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
+                    b.Property<int?>("Type")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("features")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -97,18 +135,19 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ImageName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("PropertyId")
+                    b.Property<Guid?>("PropertyId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("base64")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("contentType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -161,13 +200,22 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.PaymentMethod", b =>
+                {
+                    b.HasOne("Fantasis_Tourism_DataAccess.Model.Users", "User")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.PropertyImage", b =>
                 {
                     b.HasOne("Fantasis_Tourism_DataAccess.Model.Property", "Property")
                         .WithMany("Images")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PropertyId");
 
                     b.Navigation("Property");
                 });
@@ -175,6 +223,11 @@ namespace Fantasis_Tourism_DataAccess.Migrations
             modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.Property", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Fantasis_Tourism_DataAccess.Model.Users", b =>
+                {
+                    b.Navigation("PaymentMethods");
                 });
 #pragma warning restore 612, 618
         }
