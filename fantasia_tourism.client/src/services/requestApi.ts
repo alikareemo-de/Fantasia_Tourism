@@ -1,6 +1,13 @@
 // Request management API
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
+export enum RequestStatus {
+    Pending = 1,
+    Approved = 2,
+    Rejected = 3,
+    Cancelled = 4
+}
 export interface BookingRequest {
     id: string;
     propertyId: string;
@@ -12,7 +19,7 @@ export interface BookingRequest {
     expectedArrivalTime?: string;
     numberOfGuests: number;
     additionalNotes?: string;
-    status: 'pending' | 'approved' | 'rejected' | 'cancelled';
+    status: RequestStatus;
     createdDate: string;
 }
 
@@ -47,7 +54,7 @@ export const createBookingRequest = async (requestData: {
 
 export const fetchUserRequests = async (userId: string): Promise<BookingRequest[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/requests/user/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/Request/GetUserRequest?userId=${userId}`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch user requests: ${response.statusText}`);
@@ -62,7 +69,7 @@ export const fetchUserRequests = async (userId: string): Promise<BookingRequest[
 
 export const fetchRequestsToUser = async (hostId: string): Promise<BookingRequest[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/requests/host/${hostId}`);
+        const response = await fetch(`${API_BASE_URL}/api/Request/GetRequestForUser?hostId=${hostId}`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch requests to user: ${response.statusText}`);
@@ -92,9 +99,8 @@ export const approveRequest = async (requestId: string): Promise<void> => {
 
 export const rejectRequest = async (requestId: string): Promise<void> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/requests/${requestId}/reject`, {
-            method: 'PUT',
-        });
+        const response = await fetch(`${API_BASE_URL}/api/Request/RejectRequest?requestId=${requestId}`);
+
 
         if (!response.ok) {
             throw new Error(`Failed to reject request: ${response.statusText}`);
@@ -107,10 +113,8 @@ export const rejectRequest = async (requestId: string): Promise<void> => {
 
 export const cancelRequest = async (requestId: string): Promise<void> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/requests/${requestId}/cancel`, {
-            method: 'PUT',
-        });
-
+        const response = await fetch(`${API_BASE_URL}/api/Request/CancelRequest?requestId=${requestId}`);
+         
         if (!response.ok) {
             throw new Error(`Failed to cancel request: ${response.statusText}`);
         }

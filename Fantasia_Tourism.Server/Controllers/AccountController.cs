@@ -27,26 +27,27 @@ namespace Fantasia_Tourism.Server.Controllers
                 return Unauthorized(new { message = "Invalid username or password" });
             }
 
-            var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username);
+            var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username, "User");
 
-            return Ok(new
-            {
-                user = new
-                {
-                    id = user.Id,
-                    username = user.Username,
-                    firstName = user.FirstName,
-                    lastName = user.LastName,
-                    email = user.Email,
-                    cellPhoneNumber = user.CellPhoneNumber,
-                    dateOfBirth = user.Dateofbirth,
-                    country = user.country,
-                    city = user.city,
-                    address = user.Address
+            //return Ok(new
+            //{
+            //    user = new
+            //    {
+            //        id = user.Id,
+            //        username = user.Username,
+            //        firstName = user.FirstName,
+            //        lastName = user.LastName,
+            //        email = user.Email,
+            //        cellPhoneNumber = user.CellPhoneNumber,
+            //        dateOfBirth = user.Dateofbirth,
+            //        country = user.country,
+            //        city = user.city,
+            //        address = user.Address
 
-                },
-                token = token
-            });
+            //    },
+            //    token = token
+            //});
+            return Ok(new { token });
         }
 
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Banner from '@/components/Banner';
-import CitiesSection from '@/components/CitiesSection';
+import LastProp from '@/components/LastProperties';
 //import OffersSection from '@/components/OffersSection';
 import Footer from '@/components/Footer';
 
@@ -12,7 +12,7 @@ const Index: React.FC = () => {
       <Navigation />
       <div className="flex-grow">
         <Banner />
-        <CitiesSection />
+        <LastProp />
       {/*  <OffersSection />*/}
       </div>
       <Footer />

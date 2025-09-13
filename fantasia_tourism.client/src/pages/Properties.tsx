@@ -4,10 +4,9 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, Map, Star, Plus } from 'lucide-react';
-import AddProperty from '@/components/AddProperty';
 import { Link } from "react-router-dom";
+import { useUser } from '../contexts/UserContext';
 
 import { fetchProperties } from '@/services/propertyApi';
 import PropertyImageGallery from '@/components/PropertyImageGallery';
@@ -94,10 +93,10 @@ const PropertyItem: React.FC<PropertyItemProps> = ({ property }) => {
 const Properties = () => {
     const [properties, setProperties] = useState<Property[]>([]);
     const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'saved'>('upcoming');
-
+    const { user } = useUser();
     useEffect(() => {
         (async () => {
-            const data = await fetchProperties();
+            const data = await fetchProperties(user.id);
             setProperties(data ?? []);
         })();
     }, []);

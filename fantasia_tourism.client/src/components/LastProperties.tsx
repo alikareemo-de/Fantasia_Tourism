@@ -19,13 +19,13 @@ interface Property {
     images: PropertyImage[];
 }
 
-interface CityCardProps {
+interface LastProperties {
     title: string;
     count: number;
     images?: PropertyImage[];
 }
 
-const CityCard: React.FC<CityCardProps> = ({ title, count, images }) => {
+const CityCard: React.FC<LastProperties> = ({ title, count, images }) => {
     return (
         <div className="tourism-card hover-scale group">
             <div className="h-48 bg-tourism-light-blue relative overflow-hidden">
@@ -47,7 +47,7 @@ const CityCard: React.FC<CityCardProps> = ({ title, count, images }) => {
     );
 };
 
-const CitiesSection: React.FC = () => {
+const LastProp: React.FC = () => {
     const [properties, setProperties] = useState<Property[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -71,7 +71,7 @@ const CitiesSection: React.FC = () => {
         <div className="py-16 px-6 bg-gradient-to-b from-white to-tourism-light-blue/30">
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-                    <h2 className="section-heading text-tourism-ocean">√ÕœÀ «·⁄—Ê÷</h2>
+                    <h2 className="section-heading text-tourism-ocean">Latest properties</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -93,4 +93,4 @@ const CitiesSection: React.FC = () => {
     );
 };
 
-export default CitiesSection;
+export default LastProp;

@@ -62,7 +62,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwitchToRe
       });
       
       setUser(user);
-      toast.success(`Welcome back, ${user.firstName}!`);
+      toast.success(`Welcome back, ${user.username}!`);
       onClose();
       form.reset();
     } catch (error) {

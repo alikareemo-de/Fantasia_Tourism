@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { toast } from '@/hooks/use-toast';
-import { BookingRequest, fetchUserRequests, fetchRequestsToUser, approveRequest, rejectRequest, cancelRequest } from '@/services/requestApi';
+import { BookingRequest, RequestStatus, fetchUserRequests, fetchRequestsToUser, approveRequest, rejectRequest, cancelRequest } from '@/services/requestApi';
 import { Calendar, Clock, Users, FileText, CheckCircle, XCircle, X } from 'lucide-react';
 
 const Requests: React.FC = () => {
@@ -47,7 +47,7 @@ const Requests: React.FC = () => {
         try {
             await cancelRequest(requestId);
             setMyRequests(prev => prev.map(req =>
-                req.id === requestId ? { ...req, status: 'cancelled' } : req
+                req.id === requestId ? { ...req, status: RequestStatus.Cancelled } : req
             ));
             toast({
                 title: "Success",
@@ -66,7 +66,7 @@ const Requests: React.FC = () => {
         try {
             await approveRequest(requestId);
             setRequestsToMe(prev => prev.map(req =>
-                req.id === requestId ? { ...req, status: 'approved' } : req
+                req.id === requestId ? { ...req, status: RequestStatus.Approved } : req
             ));
             toast({
                 title: "Success",
@@ -81,11 +81,12 @@ const Requests: React.FC = () => {
         }
     };
 
+
     const handleRejectRequest = async (requestId: string) => {
         try {
             await rejectRequest(requestId);
             setRequestsToMe(prev => prev.map(req =>
-                req.id === requestId ? { ...req, status: 'rejected' } : req
+                req.id === requestId ? { ...req, status: RequestStatus.Rejected } : req
             ));
             toast({
                 title: "Success",
@@ -100,17 +101,24 @@ const Requests: React.FC = () => {
         }
     };
 
-    const getStatusBadge = (status: string) => {
+    const getStatusBadge = (status: RequestStatus) => {
         const variants = {
-            pending: "secondary",
-            approved: "default",
-            rejected: "destructive",
-            cancelled: "outline"
+            [RequestStatus.Pending]: "secondary",
+            [RequestStatus.Approved]: "default",
+            [RequestStatus.Rejected]: "destructive",
+            [RequestStatus.Cancelled]: "outline"
         } as const;
 
+        const statusNames = {
+            [RequestStatus.Pending]: "Pending",
+            [RequestStatus.Approved]: "Approved",
+            [RequestStatus.Rejected]: "Rejected",
+            [RequestStatus.Cancelled]: "Cancelled"
+        };
+
         return (
-            <Badge variant={variants[status as keyof typeof variants] || "secondary"}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+            <Badge variant={variants[status] || "secondary"}>
+                {statusNames[status] || "Unknown"}
             </Badge>
         );
     };
@@ -215,7 +223,7 @@ const Requests: React.FC = () => {
                                                     <p className="text-sm text-muted-foreground">
                                                         Requested on {new Date(request.createdDate).toLocaleDateString()}
                                                     </p>
-                                                    {request.status === 'pending' && (
+                                                    {request.status === RequestStatus.Pending && (
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
@@ -297,7 +305,7 @@ const Requests: React.FC = () => {
                                                     <p className="text-sm text-muted-foreground">
                                                         Requested on {new Date(request.createdDate).toLocaleDateString()}
                                                     </p>
-                                                    {request.status === 'pending' && (
+                                                    {request.status === RequestStatus.Pending && (
                                                         <div className="flex gap-2">
                                                             <Button
                                                                 variant="outline"

@@ -8,6 +8,7 @@ namespace Fantasis_Tourism_Service.Service
         Task<bool> UploadImage(UploadImageRequest requests);
         Task<bool> AddPropImage(List<PropertyImage> images);
         Task<List<PropertyDto>> GetAllProperties(string userId = "");
+        Task<List<PropertyDto>> GetProperties(string userId = "");
         Task<List<PropertyDto>> GetAllLastProperties();
         Task<PropertyDto> GetPropertyById(string Id);
         Task<bool> DeleteProperty(string Id);

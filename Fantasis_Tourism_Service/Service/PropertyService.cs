@@ -88,6 +88,20 @@ namespace Fantasis_Tourism_Service.Service
             }
         }
 
+        public async Task<List<PropertyDto>> GetProperties(string userId = "")
+        {
+            try
+            {
+                var result = await _propertyRepository.GetProperties(userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
+
         public async Task<List<PropertyDto>> GetAllProperties(string userId = "")
         {
             try

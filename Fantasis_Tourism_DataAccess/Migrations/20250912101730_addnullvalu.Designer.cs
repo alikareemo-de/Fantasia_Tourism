@@ -4,6 +4,7 @@ using Fantasis_Tourism_DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fantasis_Tourism_DataAccess.Migrations
 {
     [DbContext(typeof(Fantasis_TourismDbContext))]
-    partial class Fantasis_TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250912101730_addnullvalu")]
+    partial class addnullvalu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

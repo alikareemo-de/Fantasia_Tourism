@@ -89,6 +89,61 @@ namespace Fantasis_Tourism_DataAccess.Services
             }
         }
 
+
+        public async Task<List<PropertyDto>> GetProperties(string userId = "")
+        {
+            try
+            {
+                var query = _context.Property
+        .Include(p => p.Images)
+        .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    if (Guid.TryParse(userId, out Guid userGuid))
+                    {
+                        query = query.Where(p => p.UserId != userGuid);
+                    }
+                }
+
+                query = query.OrderByDescending(p => p.CreatedDate);
+
+                var properties = await query
+                    .Select(p => new PropertyDto
+                    {
+                        Id = p.Id,
+                        UserId = p.UserId,
+                        PropertyName = p.PropertyName,
+                        Type = (PropertyType)p.Type,
+                        Description = p.Description,
+                        Capacity = p.Capacity,
+                        PricePerNight = p.PricePerNight,
+                        Status = p.Status,
+                        City = p.City,
+                        Country = p.Country,
+                        Location = p.Location,
+                        Rooms = p.Rooms,
+                        HasCar = p.HasCar,
+                        TripPlan = p.TripPlan,
+                        CreatedDate = p.CreatedDate,
+                        Images = p.Images
+                            .Where(img => img.IsMain)
+                            .ToList()
+                    })
+                    .ToListAsync();
+
+                return properties;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+
+            }
+        }
+
+
+
         public async Task<List<PropertyDto>> GetAllProperties(string userId = "")
         {
             try

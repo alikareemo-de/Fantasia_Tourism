@@ -7,6 +7,7 @@ import { Search, UserRound, Settings, HomeIcon, Compass, Map } from "lucide-reac
 import RegisterModal from './RegisterModal';
 import SignInModal from './SignInModal';
 import { useUser } from "@/contexts/UserContext";
+import { isAdmin } from "../services/auth";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,6 +19,7 @@ const Navigation: React.FC = () => {
     const { user, signOut } = useUser();
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showSignInModal, setShowSignInModal] = useState(false);
+    const userIsAdmin = isAdmin();
 
     return (
         <nav className="w-full bg-white py-4 px-6 flex items-center justify-between shadow-md sticky top-0 z-20">
@@ -110,7 +112,7 @@ const Navigation: React.FC = () => {
                                 <Link to="/requests" className="cursor-pointer">Requests</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="hover:bg-tourism-light-blue/30">
-                                <Link to="/Myproperties" className="cursor-pointer">My Properties</Link>
+                                <Link to="/properties" className="cursor-pointer">Properties</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="hover:bg-tourism-light-blue/30">
                                 <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
@@ -118,6 +120,11 @@ const Navigation: React.FC = () => {
                             <DropdownMenuItem asChild className="hover:bg-tourism-light-blue/30">
                                 <Link to="/settings" className="cursor-pointer">Settings</Link>
                             </DropdownMenuItem>
+                            {userIsAdmin && (
+                                <DropdownMenuItem asChild className="hover:bg-tourism-light-blue/30">
+                                    <Link to="/admin" className="cursor-pointer">Admin Dashboard</Link>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem className="text-tourism-coral cursor-pointer hover:bg-tourism-light-blue/30" onClick={signOut}>
                                 Log out
                             </DropdownMenuItem>

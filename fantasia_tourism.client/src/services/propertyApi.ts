@@ -88,9 +88,9 @@ export const fetchPropertyById = async (id: string): Promise<PropertyDto> => {
     }
 };
 
-export const fetchProperties = async (): Promise<Property[]> => {
+export const fetchProperties = async (userId: string): Promise<Property[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/properties/GetAll`);
+        const response = await fetch(`${API_BASE_URL}/api/properties/GetAll?userId=${userId}`);
         if (!response.ok) throw new Error(`Failed to fetch properties: ${response.statusText}`);
         const data: Property[] = await response.json();
         return data;

@@ -40,5 +40,43 @@ namespace Fantasia_Tourism.Server.Controllers
             }
         }
 
+        [HttpGet("GetUserRequest")]
+        public async Task<IActionResult> GetUserRequest(string userId)
+        {
+            var result = await _bookingService.GetUserRequest(userId);
+            if (result == null) return BadRequest();
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetRequestForUser")]
+        public async Task<IActionResult> GetRequestForUser(string hostId)
+        {
+            var result = await _bookingService.GetRequestForUser(hostId);
+            if (result == null) return BadRequest();
+
+            return Ok(result);
+        }
+
+        [HttpGet("RejectRequest")]
+        public async Task<IActionResult> RejectRequest(string requestId)
+        {
+            if (await _bookingService.RejectRequest(requestId))
+            {
+                return Ok("Done");
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("CancelRequest")]
+        public async Task<IActionResult> CancelRequest(string requestId)
+        {
+            if (await _bookingService.CancelRequest(requestId))
+            {
+                return Ok("Done");
+            }
+            return BadRequest();
+        }
+
     }
 }

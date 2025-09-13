@@ -1,4 +1,6 @@
-﻿namespace Fantasis_Tourism_DataAccess.Model
+﻿using Fantasis_Tourism_DataAccess.Enums;
+
+namespace Fantasis_Tourism_DataAccess.Model
 {
     public class Booking
     {
@@ -13,10 +15,12 @@
         public string? HostId { get; set; }
         public Users? Host { get; set; }
 
-        public DateTime CheckInDate { get; set; }
-        public DateTime CheckOutDate { get; set; }
+        public DateTime? CheckInDate { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+        public DateTime? createdDate { get; set; } = DateTime.Now;
         public string? ExpectedArrivalTime { get; set; }
         public int? NumberOfGuests { get; set; }
         public string? AdditionalNotes { get; set; }
+        public Enum_Status status { get; set; } = Enum_Status.pending;
     }
 }

@@ -4,6 +4,7 @@ using Fantasis_Tourism_DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fantasis_Tourism_DataAccess.Migrations
 {
     [DbContext(typeof(Fantasis_TourismDbContext))]
-    partial class Fantasis_TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250911221124_addcreatedDate")]
+    partial class addcreatedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,10 +34,10 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                     b.Property<string>("AdditionalNotes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CheckInDate")
+                    b.Property<DateTime>("CheckInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CheckOutDate")
+                    b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ExpectedArrivalTime")
@@ -52,7 +55,7 @@ namespace Fantasis_Tourism_DataAccess.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("createdDate")
+                    b.Property<DateTime>("createdDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("status")

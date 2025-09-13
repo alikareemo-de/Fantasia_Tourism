@@ -12,5 +12,7 @@ namespace Fantasis_Tourism_DataAccess.Services
         Task<bool> DeleteProperty(string Id);
         Task<bool> UpdateProerty(Property property);
 
+        Task<List<PropertyDto>> GetProperties(string userId = "");
+
     }
 }

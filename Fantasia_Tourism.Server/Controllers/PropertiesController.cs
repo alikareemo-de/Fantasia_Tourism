@@ -45,14 +45,6 @@ namespace Fantasia_Tourism.Server.Controllers
         //[HttpPost("Editproperties")]
         //public async Task<IActionResult> Editproperties([FromBody] )
 
-        [HttpPost("upload-images")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest requests)
-        {
-            var uploadimage = await _propertyService.UploadImage(requests);
-            if (uploadimage) return Ok();
-            return BadRequest("Fail...!");
-        }
 
         [HttpPost("property-images-bulk")]
         public async Task<IActionResult> AddPropertyImage([FromBody] List<PropertyImage> propimages)
@@ -71,10 +63,10 @@ namespace Fantasia_Tourism.Server.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<PropertyDto>>> GetProperties()
+        public async Task<ActionResult<IEnumerable<PropertyDto>>> GetProperties(string userId)
         {
             List<PropertyDto> properties = new List<PropertyDto>();
-            properties = await _propertyService.GetAllProperties();
+            properties = await _propertyService.GetProperties();
             return Ok(properties);
         }
 
