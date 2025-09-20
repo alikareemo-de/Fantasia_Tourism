@@ -12,6 +12,8 @@ namespace Fantasis_Tourism_DataAccess
         public DbSet<PropertyImage> PropertyImages { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Booking> Booking { get; set; }
+        public DbSet<SettingTable> SettingTables { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +44,9 @@ namespace Fantasis_Tourism_DataAccess
                       .WithMany(p => p.Images)
                       .HasForeignKey(e => e.PropertyId);
             });
+            modelBuilder.Entity<SettingTable>()
+            .HasIndex(s => s.Key)
+            .IsUnique();
         }
     }
 }

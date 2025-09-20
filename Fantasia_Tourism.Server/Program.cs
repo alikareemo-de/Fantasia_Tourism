@@ -51,6 +51,9 @@ namespace Fantasia_Tourism.Server
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IEmailSender, EmailService>();
+            builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+            builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IEmailSender, EmailService>();
 
             builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();

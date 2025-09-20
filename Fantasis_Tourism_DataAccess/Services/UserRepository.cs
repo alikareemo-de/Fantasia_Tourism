@@ -24,6 +24,12 @@ namespace Fantasis_Tourism_DataAccess.Services
         .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<PaymentMethod> Getpaymentinfo(string userId)
+        {
+            var result = await _context.PaymentMethods.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            return result;
+        }
         public async Task<bool> CheckUserinfo(string userId)
         {
             var existing = await _context.PaymentMethods

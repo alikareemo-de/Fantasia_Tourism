@@ -19,51 +19,54 @@ import AdminRequests from "./pages/AdminRequests";
 import AdminProperties from "./pages/AdminProperties";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import { ThemeProvider } from "./hooks/useTheme";
 const queryClient = new QueryClient();
 
 const App = () => (
     <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-                <UserProvider>
-                    <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/property/:id" element={<PropertyDetails />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/requests" element={<Requests />} />
-                        <Route path="/add-book/:id" element={<AddBook />} />
-                        <Route path="/properties" element={<Properties />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/admin" element={
-                            <ProtectedRoute requireAdmin={true}>
-                                <AdminDashboard />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/users" element={
-                            <ProtectedRoute requireAdmin={true}>
-                                <AdminUsers />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/requests" element={
-                            <ProtectedRoute requireAdmin={true}>
-                                <AdminRequests />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/properties" element={
-                            <ProtectedRoute requireAdmin={true}>
-                                <AdminProperties />
-                            </ProtectedRoute>
-                        } />
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </UserProvider>
-            </BrowserRouter>
-        </TooltipProvider>
+        <ThemeProvider defaultTheme="light" storageKey="app-theme">
+
+            <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                    <UserProvider>
+                        <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/property/:id" element={<PropertyDetails />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/requests" element={<Requests />} />
+                            <Route path="/add-book/:id" element={<AddBook />} />
+                            <Route path="/properties" element={<Properties />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/admin" element={
+                                <ProtectedRoute requireAdmin={true}>
+                                    <AdminDashboard />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/admin/users" element={
+                                <ProtectedRoute requireAdmin={true}>
+                                    <AdminUsers />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/admin/requests" element={
+                                <ProtectedRoute requireAdmin={true}>
+                                    <AdminRequests />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/admin/properties" element={
+                                <ProtectedRoute requireAdmin={true}>
+                                    <AdminProperties />
+                                </ProtectedRoute>
+                            } />
+                            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                    </UserProvider>
+                </BrowserRouter>
+            </TooltipProvider>
+        </ThemeProvider>
     </QueryClientProvider>
 );
 

@@ -107,7 +107,7 @@ namespace Fantasia_Tourism.Server.Controllers
 
         }
 
-        [HttpPost("add-method")]
+        [HttpPost("updatepayment")]
         public async Task<IActionResult> UpdatePaymentMethod(PaymentMethodDto paymentMethod)
         {
             var result = await _userService.AddOrUpdatePaymentMethodAsync(paymentMethod);
@@ -128,6 +128,12 @@ namespace Fantasia_Tourism.Server.Controllers
             return Ok(await _userService.CheckUserinfo(userId));
         }
 
-
+        [HttpGet("getpaymentinfobyuserid/{userId}")]
+        public async Task<IActionResult> Getpaymentinfo(string userId)
+        {
+            var info = await _userService.Getpaymentinfo(userId);
+            if (info == null) return NoContent();
+            return Ok(info);
+        }
     }
 }

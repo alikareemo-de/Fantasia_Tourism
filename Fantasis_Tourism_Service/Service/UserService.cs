@@ -68,6 +68,18 @@ namespace Fantasis_Tourism_Service.Service
             };
         }
 
+        public async Task<PaymentMethod> Getpaymentinfo(string userId)
+        {
+            try
+            {
+                return await _userRepository.Getpaymentinfo(userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
         public async Task<List<Users>> GetAllUsersAsync()
         {
             return await _userRepository.GetAllAsync();
